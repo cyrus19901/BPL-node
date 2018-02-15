@@ -296,9 +296,9 @@ Transaction.prototype.checkBalance = function (amount, balance, trs, sender) {
 	var exceededBalance = bignum(sender[balance].toString()).lessThan(amount);
 	var exceeded = (trs.blockId !== genesisblock.block.id && exceededBalance);
 
-	if (exceptions.balance.indexOf(trs.id) > -1){
-		exceeded = false;
-	}
+	// if (exceptions.balance.indexOf(trs.blockId) > -1){
+	// 	exceeded = false;
+	// }
 	return {
 		exceeded: exceeded,
 		error: exceeded ? [

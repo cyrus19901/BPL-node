@@ -19,7 +19,7 @@ var z_schema = require('./helpers/z_schema.js');
 var colors = require('colors');
 var vorpal = require('vorpal')();
 var spawn = require('child_process').spawn;
-
+var unique = require("array-unique");
 process.stdin.resume();
 
 var versionBuild = fs.readFileSync(path.join(__dirname, 'build'), 'utf8');
@@ -348,9 +348,23 @@ BPL BPL BPL BPL BPL          BPL BPL                      BPL BPL BPL BPL BPL BP
 				} else {
 					next();
 				}
-			});
+			});	
+			function hasDuplicates(secret) {
+			    var valuesSoFar = Object.create(null);
+			    for (var i = 0; i < secret.length; ++i) {
+			        var value = secret[i];
+			        if (value in valuesSoFar) {
+			            return true;
+			        }
+			        valuesSoFar[value] = true;
+			    }
+			    return false;
+			}
+			var secret = scope.config.forging.secret
+			var dupilicate = hasDuplicates(secret)
 
-			scope.network.server.listen(scope.config.port, scope.config.address, function (err) {
+			if (dupilicate == false){
+				scope.network.server.listen(scope.config.port, scope.config.address, function (err) {
 				scope.logger.info('# BPL node server started on: ' + scope.config.address + ':' + scope.config.port);
 
 				if (!err) {
@@ -367,7 +381,10 @@ BPL BPL BPL BPL BPL          BPL BPL                      BPL BPL BPL BPL BPL BP
 					cb(err, scope.network);
 				}
 			});
-
+			}
+			else {
+				console.log("Please remove dupicate secret from the config file")
+			}
 			if(program.interactive){
 				startInteractiveMode(scope);
 			}
