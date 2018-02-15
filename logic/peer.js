@@ -32,7 +32,8 @@ function Peer(ip, port, version, os){
 	this.port = port;
 	this.version = version;
 	this.os = os;
-	this.protocol = (port%1000)==443?"https":"http";
+	this.protocol = "http";
+  // this.protocol = (port%1000)==443?"https":"http";
 	this.liteclient = port < 80;
   this.websocketapi = false;
 	this.status = "NEW";
@@ -42,27 +43,70 @@ function Peer(ip, port, version, os){
 	this.delay = 10000;
 	this.lastchecked = 0;
 	this.counterror = 0;
-
+  this.banuntil = new Date().getTime();
   this.forgingAllowed = false;
 	this.currentSlot = 0;
 
-	if(!this.liteclient){
-		this.updateStatus();
-		var that = this;
-		this.intervalId = setInterval(
-			function(){
-				if(new Date().getTime() - that.lastchecked > 60000){
-					that.updateStatus();
-				}
-			}, 60000);
-	}
+  if (!this.liteclient){
+    this.startMonitoring();
+  }
 }
+
+Peer.prototype.startMonitoring = function(){
+  this.updateStatus();
+  var that = this;
+  if (!this.intervalId){
+    this.counterror = 0
+    this.intervalId = setInterval(
+      function(){
+        if(new Date().getTime() - that.lastchecked > 60000){
+         //node down for a few minutes is banned
+         if (that.counterror > 10){
+          that.stopMonitorring();
+          // 6 hour ban
+          that.ban(6*60)
+         }
+         else {
+          that.updateStatus();
+         } 
+        }
+      },6000);
+  }
+};
+
+Peer.prototype.stopMonitorring = function(){
+  clearInterval(this.intervalId)
+  this.intervalId = null;
+};
+
+Peer.prototype.ban = function (){
+  this.banuntil = new Date().getTime() + minutesToBan * 60 * 1000;
+  library.logger.info(this + "banned for "+ minutesToBan+" minutes");
+};
+
+Peer.prototype.unban =function (){
+  if (this.banuntil < new Date().getTime() && !this.intervalId){
+    this.monitor();
+  }
+}
+// 	if(!this.liteclient){
+// 		this.updateStatus();
+// 		var that = this;
+// 		this.intervalId = setInterval(
+// 			function(){
+// 				if(new Date().getTime() - that.lastchecked > 60000){
+// 					that.updateStatus();
+// 				}
+// 			}, 60000);
+// 	}
+// }
 
 Peer.prototype.toObject = function(){
   return {
     ip: this.ip,
     port: this.port,
     version: this.version,
+    errors: this.counterror,
     os: this.os,
     height: this.height,
     status: this.status,
