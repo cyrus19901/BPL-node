@@ -1,7 +1,7 @@
 'use strict';
 
 var async = require('async');
-var constants = require('../helpers/constants.js');
+var constants = require('../constants.json');
 var transactionTypes = require('../helpers/transactionTypes.js');
 var slots = require('../helpers/slots.js');
 

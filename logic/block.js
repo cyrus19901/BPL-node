@@ -6,7 +6,7 @@ var bpljs = require('bpljs');
 var bignum = require('../helpers/bignum.js');
 var ByteBuffer = require('bytebuffer');
 var BlockReward = require('../logic/blockReward.js');
-var constants = require('../helpers/constants.js');
+var constants = require('../constants.json');
 var blocksSQL = require('../sql/blocks.js');
 var bigdecimal = require("bigdecimal");
 

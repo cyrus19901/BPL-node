@@ -4,7 +4,7 @@ var _ = require('lodash');
 var bs58check = require('bs58check');
 var bignum = require('../helpers/bignum.js');
 var ByteBuffer = require('bytebuffer');
-var constants = require('../helpers/constants.js');
+var constants = require('../constants.json');
 var crypto = require('crypto');
 var bs58check = require('bs58check');
 var exceptions = require('../helpers/exceptions.js');
@@ -302,7 +302,7 @@ Transaction.prototype.checkBalance = function (amount, balance, trs, sender) {
 	return {
 		exceeded: exceeded,
 		error: exceeded ? [
-			'Account does not have enough BPL:', sender.address,
+			'Account does not have enough '+this.scope.config.tokenShortName+':', sender.address,
 			'balance:', bignum(sender[balance].toString() || '0').div(Math.pow(10,8))
 		].join(' ') : null
 	};

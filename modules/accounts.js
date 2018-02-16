@@ -2,7 +2,7 @@
 
 var bignum = require('../helpers/bignum.js');
 var BlockReward = require('../logic/blockReward.js');
-var constants = require('../helpers/constants.js');
+var constants = require('../constants.json');
 var crypto = require('crypto');
 var bpljs = require('bpljs');
 var extend = require('extend');

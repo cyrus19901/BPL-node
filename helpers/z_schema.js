@@ -2,6 +2,8 @@
 
 var ip = require('ip');
 var bs58check = require('bs58check');
+var constants = require('../constants.json');
+
 
 function schema(network){
   this.z_schema = require('z-schema');
@@ -90,7 +92,7 @@ function schema(network){
   });
 
   this.z_schema.registerFormat('delegatesList', function (obj) {
-    obj.limit = 201;
+    obj.limit = constants.activeDelegates;
     return true;
   });
 

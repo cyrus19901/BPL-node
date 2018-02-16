@@ -79,8 +79,10 @@ Peer.prototype.stopMonitorring = function(){
   this.intervalId = null;
 };
 
-Peer.prototype.ban = function (){
+Peer.prototype.ban = function (minutesToBan){
   this.banuntil = new Date().getTime() + minutesToBan * 60 * 1000;
+  console.log("====================================");
+  console.log(this);
   library.logger.info(this + "banned for "+ minutesToBan+" minutes");
 };
 
@@ -175,7 +177,6 @@ Peer.prototype.fetchStatus = function(cb){
 			if(!check.verified){
 				that.status="FORK";
 				that.counterror++;
-				console.log(res.body);
 				library.logger.trace(that + " sent header", res.body.header);
 				library.logger.debug(that + " header errors", check.errors);
 				return cb && cb('Received invalid block header from peer '+that, res);
