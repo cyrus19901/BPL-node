@@ -55,6 +55,7 @@ function Peer(ip, port, version, os){
 Peer.prototype.startMonitoring = function(){
   this.updateStatus();
   var that = this;
+  console.log("...........>>>>>>>>>>>>>>>>>>>>>>>>>")
   if (!this.intervalId){
     this.counterror = 0
     this.intervalId = setInterval(
@@ -71,6 +72,7 @@ Peer.prototype.startMonitoring = function(){
          } 
         }
       },6000);
+     console.log(this)
   }
 };
 
@@ -83,12 +85,12 @@ Peer.prototype.ban = function (minutesToBan){
   this.banuntil = new Date().getTime() + minutesToBan * 60 * 1000;
   console.log("====================================");
   console.log(this);
-  library.logger.info(this + "banned for "+ minutesToBan+" minutes");
+  library.logger.info(this + "banned for "+ minutesToBan+ " minutes");
 };
 
 Peer.prototype.unban =function (){
   if (this.banuntil < new Date().getTime() && !this.intervalId){
-    this.monitor();
+    this.startMonitoring();
   }
 }
 // 	if(!this.liteclient){
