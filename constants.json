@@ -42,5 +42,9 @@
   },
   "signatureLength": 196,
   "totalAmount": 2500000000000000,
-  "unconfirmedTransactionTimeOut": 10800
+  "unconfirmedTransactionTimeOut": 10800,
+  "reliability": {
+    "roundCycle": 20,
+    "triggerAtRound": 1460
+  }
 }
