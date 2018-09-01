@@ -9,9 +9,9 @@
   "db": {
     "host": "localhost",
     "port": 5432,
-    "database": "dbName",
-    "user": "userName",
-    "password": "password",
+    "database": "bpl_testnet",
+    "user": null,
+    "password": "Password",
     "poolSize": 20,
     "poolIdleTimeout": 30000,
     "reapIntervalMillis": 1000,
@@ -37,87 +37,43 @@
     "minimumNetworkReach": 1,
     "list": [
       {
-        "ip": "13.124.137.65",
+        "ip": "s01.tc.blockpool.io",
         "port": 9028
       },
       {
-        "ip": "52.66.184.223",
+        "ip": "s02.tc.blockpool.io",
         "port": 9028
       },
       {
-        "ip": "34.211.111.67",
+        "ip": "s03.tc.blockpool.io",
         "port": 9028
       },
       {
-        "ip": "13.59.176.127",
+        "ip": "s04.tc.blockpool.io",
         "port": 9028
       },
       {
-        "ip": "54.175.122.162",
+        "ip": "s05.tc.blockpool.io",
         "port": 9028
       },
       {
-        "ip": "13.126.40.180",
+        "ip": "s06.tc.blockpool.io",
         "port": 9028
       },
       {
-        "ip": "54.93.85.178",
+        "ip": "s07.tc.blockpool.io",
         "port": 9028
       },
       {
-        "ip": "54.246.214.229",
+        "ip": "s08.tc.blockpool.io",
         "port": 9028
       },
       {
-        "ip": "35.182.28.68",
+        "ip": "s09.tc.blockpool.io",
         "port": 9028
       },
       {
-        "ip": "54.153.35.65",
-        "port": 9028
-      },
-      {
-        "ip": "54.252.170.222",
-        "port": 9028
-      },
-      {
-        "ip": "13.124.137.65",
-        "port": 9028
-      },
-      {
-        "ip": "52.78.18.248",
-        "port": 9028
-      },
-      {
-        "ip": "54.206.6.159",
-        "port": 9028
-      },
-      {
-        "ip": "54.183.178.42",
-        "port": 9028
-      },
-      {
-        "ip": "54.241.135.25",
-        "port": 9028
-      },
-      {
-        "ip": "52.60.226.39",
-        "port": 9028
-      },
-      {
-        "ip": "52.60.223.205",
-        "port": 9028
-      },
-      {
-        "ip": "176.34.156.16",
-        "port": 9028
-      },
-      {
-        "ip": "54.154.120.195",
-        "port": 9028
-      },
-      {
-        "ip": "54.93.33.249",
+        "ip": "s10.tc.blockpool.io",
         "port": 9028
       }
     ],

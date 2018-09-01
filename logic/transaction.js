@@ -1,16 +1,13 @@
 'use strict';
 
-var _ = require('lodash');
-var bs58check = require('bs58check');
 var bignum = require('../helpers/bignum.js');
 var ByteBuffer = require('bytebuffer');
-var constants = require('../helpers/constants.js');
+var constants = require('../constants.json');
 var crypto = require('crypto');
-var bs58check = require('bs58check');
 var exceptions = require('../helpers/exceptions.js');
 var slots = require('../helpers/slots.js');
 var sql = require('../sql/transactions.js');
-
+var bpljs = require('bpljs');
 // Private fields
 var self, __private = {}, genesisblock = null;
 
@@ -20,6 +17,12 @@ __private.types = {};
 function Transaction (scope, cb) {
 	this.scope = scope;
 	genesisblock = this.scope.genesisblock;
+	bpljs = new bpljs.BplClass({
+		'delegates': constants.activeDelegates,
+		'epochTime': constants.epochTime,
+		'interval': constants.blocktime,
+		'network': scope.config.network
+	});
 	self = this;
 	cb && cb(null, this);
 }
@@ -54,7 +57,8 @@ Transaction.prototype.create = function (data) {
 		requesterPublicKey: data.requester ? data.requester.publicKey.toString('hex') : null,
 		timestamp: slots.getTime(),
 		vendorField: data.vendorField,
-		asset: {}
+		asset: {},
+		payload: data.payload || null
 	};
 
 	trs = __private.types[trs.type].create.call(this, data, trs);
@@ -76,12 +80,12 @@ Transaction.prototype.create = function (data) {
 //
 Transaction.prototype.validateAddress = function(address){
 	try {
-		var decode = bs58check.decode(address);
+		var decode = bpljs.customAddress.bs58checkDecode(address);
 		return decode[0] == this.scope.crypto.network.pubKeyHash;
 	} catch(e){
 		return false;
 	}
-}
+};
 
 //
 //__API__ `attachAssetType`
@@ -148,7 +152,7 @@ Transaction.prototype.fromBytes = function(buffer){
 	tx.type = buffer.readByte();
 	tx.timestamp = buffer.readInt();
 	return tx;
-}
+};
 
 
 
@@ -164,11 +168,18 @@ Transaction.prototype.getBytes = function (trs, skipSignature, skipSecondSignatu
 	var bb;
 
 	try {
+		let payloadSize = 0,
+			payloadBytes = null;
 		var assetBytes = __private.types[trs.type].getBytes.call(this, trs, skipSignature, skipSecondSignature);
+		if (trs.payload) {
+			payloadBytes = new Buffer(trs.payload, 'utf8');
+			payloadSize = payloadBytes.length;
+		}
+
 		var assetSize = assetBytes ? assetBytes.length : 0;
 		var i;
 
-		bb = new ByteBuffer(1 + 4 + 32 + 8 + 21 + 64 + 64 + 64 + assetSize, true);
+		bb = new ByteBuffer(1 + 4 + 32 + 8 + 21 + 64 + 64 + 64 + assetSize + payloadSize , true);
 		bb.writeByte(trs.type);
 		bb.writeInt(trs.timestamp);
 
@@ -185,7 +196,7 @@ Transaction.prototype.getBytes = function (trs, skipSignature, skipSecondSignatu
 		}
 
 		if (trs.recipientId) {
-			var recipient = bs58check.decode(trs.recipientId);
+			let recipient = bpljs.customAddress.bs58checkDecode(trs.recipientId);
 
 			for (i = 0; i < recipient.length; i++) {
 				bb.writeByte(recipient[i]);
@@ -217,6 +228,12 @@ Transaction.prototype.getBytes = function (trs, skipSignature, skipSecondSignatu
 		if (assetSize > 0) {
 			for (i = 0; i < assetSize; i++) {
 				bb.writeByte(assetBytes[i]);
+			}
+		}
+
+		if (payloadSize > 0) {
+			for (let i = 0; i < payloadSize; i++) {
+				bb.writeByte(payloadBytes[i]);
 			}
 		}
 
@@ -299,7 +316,7 @@ Transaction.prototype.checkBalance = function (amount, balance, trs, sender) {
 	return {
 		exceeded: exceeded,
 		error: exceeded ? [
-			'Account does not have enough BPL:', sender.address,
+			'Account does not have enough '+this.scope.config.network.client.tokenShortName+':', sender.address,
 			'balance:', bignum(sender[balance].toString() || '0').div(Math.pow(10,8))
 		].join(' ') : null
 	};
@@ -439,6 +456,9 @@ Transaction.prototype.verify = function (trs, sender, requester, cb) {
 		return cb('Requester does not have a second signature');
 	}
 
+	if (trs.payload === undefined) {
+		trs.payload = null;
+	}
 	// Check sender public key
 	if (sender.publicKey && sender.publicKey !== trs.senderPublicKey) {
 		err = ['Invalid sender public key:', trs.senderPublicKey, 'expected:', sender.publicKey].join(' ');
@@ -576,7 +596,7 @@ Transaction.prototype.verify = function (trs, sender, requester, cb) {
 	}
 
 	// Check fee
-	if(!trs.fee || trs.fee < 1) {
+	if(!trs.fee || trs.fee < 1) {
 		return cb('Invalid transaction fee');
 	}
 
@@ -597,8 +617,8 @@ Transaction.prototype.verify = function (trs, sender, requester, cb) {
 
 //
 Transaction.prototype.verifyFee = function (trs) {
-  // Calculate fee
-	if(!trs.fee || trs.fee < 1) {
+	// Calculate fee
+	if(!trs.fee || trs.fee < 1) {
 		return false;
 	}
 
@@ -611,7 +631,7 @@ Transaction.prototype.verifyFee = function (trs) {
 	else {
 		return true;
 	}
-}
+};
 
 //
 //__API__ `verifySignature`
@@ -735,7 +755,7 @@ Transaction.prototype.apply = function (trs, block, sender, cb) {
 //
 Transaction.prototype.undo = function (trs, block, sender, cb) {
 	var amount = bignum(trs.amount.toString());
-	    amount = amount.plus(trs.fee.toString()).toNumber();
+	amount = amount.plus(trs.fee.toString()).toNumber();
 
 	this.scope.account.merge(sender.address, {
 		balance: amount,
@@ -804,7 +824,7 @@ Transaction.prototype.applyUnconfirmed = function (trs, sender, requester, cb) {
 //
 Transaction.prototype.undoUnconfirmed = function (trs, sender, cb) {
 	var amount = bignum(trs.amount.toString());
-	    amount = amount.plus(trs.fee.toString()).toNumber();
+	amount = amount.plus(trs.fee.toString()).toNumber();
 
 	this.scope.account.merge(sender.address, {u_balance: amount}, function (err, sender) {
 		if (err) {
@@ -840,7 +860,8 @@ Transaction.prototype.dbFields = [
 	'signature',
 	'signSignature',
 	'signatures',
-	'rawasset'
+	'rawasset',
+	'payload'
 ];
 
 //
@@ -883,7 +904,8 @@ Transaction.prototype.dbSave = function (trs) {
 				signature: signature,
 				signSignature: signSignature,
 				signatures: trs.signatures ? JSON.stringify(trs.signatures) : null,
-				rawasset: JSON.stringify(trs.asset)
+				rawasset: (trs.type === 8 || trs.type === 9? JSON.stringify({}): JSON.stringify(trs.asset)),
+				payload: trs.payload || null
 			}
 		}
 	];
@@ -972,6 +994,9 @@ Transaction.prototype.schema = {
 		},
 		asset: {
 			type: 'object'
+		},
+		payload: {
+			type: 'string'
 		}
 	},
 	required: ['type', 'timestamp', 'senderPublicKey', 'signature']
@@ -992,23 +1017,23 @@ Transaction.prototype.objectNormalize = function (trs) {
 		}
 	}
 
-
 	var report = this.scope.schema.validate(trs, Transaction.prototype.schema);
 	if (!report) {
 		var log=this.scope.logger;
 		throw 'Failed to validate transaction schema: ' + this.scope.schema.getLastErrors().map(function (err) {
-			log.error("details",err);
+			log.error('details',err);
 			return err.message;
 		}).join(', ');
 	}
-
 	try {
 		trs = __private.types[trs.type].objectNormalize.call(this, trs);
 	} catch (e) {
 		throw e;
 	}
 
-	return trs;
+ if(trs.payload === undefined || trs.payload === null)
+    trs.payload = null;
+ return trs;
 };
 
 //
@@ -1017,7 +1042,6 @@ Transaction.prototype.objectNormalize = function (trs) {
 //
 Transaction.prototype.dbRead = function (raw) {
 	var tx = raw;
-
 	tx.amount=parseInt(raw.amount);
 	tx.fee=parseInt(raw.fee);
 

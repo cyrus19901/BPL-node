@@ -3,12 +3,8 @@
 
 # Simple Blockpool Node Installation #
 
-Download the Blockpool install script
+Download Blockpool Commander
 
-https://github.com/blockpool-io/BPL-node/blob/bpl-mainnet/BPL_Node_Install_Script.sh
-
-Open up your terminal
-./BPL_Node_Install_Script.sh
 
 Let the script finish.
 
@@ -119,7 +115,7 @@ npm install forever -g
 
 ```
 To launch BPL node on mainnet:
-forever start app.js -c config.mainnet.json -g genesisBlock.mainnet.json
+forever start app.js -c config.testnet.json -g genesisBlock.testnet.json
 ```
 
 

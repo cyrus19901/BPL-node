@@ -10,8 +10,8 @@
     "host": "localhost",
     "port": 5432,
     "database": "dbName",
-    "user": "dbUser",
-    "password": "dbPassword",
+    "user": "dbuser",
+    "password": "password",
     "poolSize": 20,
     "poolIdleTimeout": 30000,
     "reapIntervalMillis": 1000,
@@ -77,5 +77,5 @@
     }
   },
   "network": "BPL-devnet",
-  "nethash": "1a418de02c68c4353d932a9568be28be20b7b9a86fcf9b653482b4f3f42a6302"
+  "nethash": "3640685da4447b369aa0a85958fd48ad7167661b4f3a890d7bde7a56590c1e6c"
 }

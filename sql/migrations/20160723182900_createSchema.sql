@@ -38,8 +38,8 @@ CREATE TABLE IF NOT EXISTS "transactions"(
   "type" SMALLINT NOT NULL,
   "timestamp" INT NOT NULL,
   "senderPublicKey" bytea NOT NULL,
-  "senderId" VARCHAR(36) NOT NULL,
-  "recipientId" VARCHAR(36),
+  "senderId" VARCHAR(50) NOT NULL,
+  "recipientId" VARCHAR(50),
   "amount" BIGINT NOT NULL,
   "fee" BIGINT NOT NULL,
   "signature" bytea NOT NULL,
@@ -48,6 +48,7 @@ CREATE TABLE IF NOT EXISTS "transactions"(
   "vendorField" VARCHAR(64),
   "signatures" TEXT,
   "rawasset" TEXT,
+  "payload" VARCHAR(50) default NULL,
   FOREIGN KEY("blockId") REFERENCES "blocks"("id") ON DELETE CASCADE
 );
 

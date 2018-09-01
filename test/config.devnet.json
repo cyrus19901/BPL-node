@@ -1,0 +1,133 @@
+{
+  "port": 4000,
+  "address": "0.0.0.0",
+  "version": "0.3.0",
+  "fileLogLevel": "info",
+  "logFileName": "logs/bpl.log",
+  "consoleLogLevel": "debug",
+  "trustProxy": false,
+  "db": {
+    "host": "localhost",
+    "port": 5432,
+    "database": "dbName",
+    "user": "dbUser",
+    "password": "password",
+    "poolSize": 20,
+    "poolIdleTimeout": 30000,
+    "reapIntervalMillis": 1000,
+    "logEvents": [
+      "error"
+    ]
+  },
+  "api": {
+    "mount": true,
+    "access": {
+      "whiteList": []
+    },
+    "options": {
+      "limits": {
+        "max": 0,
+        "delayMs": 0,
+        "delayAfter": 0,
+        "windowMs": 60000
+      }
+    }
+  },
+  "peers": {
+    "minimumNetworkReach": 1,
+    "list": [
+      {
+        "ip": "0.0.0.0",
+        "port": 4000
+      }
+    ],
+    "blackList": [],
+    "options": {
+      "limits": {
+        "max": 0,
+        "delayMs": 0,
+        "delayAfter": 0,
+        "windowMs": 60000
+      },
+      "maxUpdatePeers": 20,
+      "timeout": 5000
+    }
+  },
+  "forging": {
+    "coldstart": 6,
+    "force": true,
+    "secret": [
+      "affair setup copper brown defense student busy hello spell trumpet borrow nose",
+      "decade hero figure tomato fox slow kingdom salmon swap void atom volcano",
+      "enable tree off garbage melt panic omit evil broom oval cool width",
+      "awake bubble someone hint matrix bronze random throw scrub result flip crater",
+      "circle scale position melody mule wise puzzle giraffe pattern muscle museum olive",
+      "rifle crunch minute truck famous lady hub practice pizza doll coral nominee",
+      "anchor brave inhale argue hawk sketch design chair clown among model iron",
+      "answer thought urge hand choice upgrade soda able hover patient since snake",
+      "collect solve lucky cup silly item glove iron brick faith arrow wisdom",
+      "story total maple praise inner cradle festival student upgrade relief sword wreck",
+      "link grunt average soft daring rival rabbit race neck man joy february",
+      "start scan process proud album security pigeon hunt crowd embody plug upset",
+      "relax crucial slush arm learn guide rebel proof bone thank awesome moral",
+      "gap absent correct manual fossil rival space camera sibling seat deliver fly",
+      "pencil afraid turtle rail trade wasp old clip monitor forest favorite forest",
+      "recipe faint monkey demise situate install spider danger fatigue bachelor start clinic",
+      "moment sand bullet market twenty bench junk divide venue spike story rather",
+      "poverty lamp galaxy demand strike link gown suspect clown acid fancy mechanic",
+      "explain hundred parade catch mimic meat reunion nest acquire mean ritual oxygen",
+      "drill valley height infant nurse rare rough harbor sell chimney holiday rebuild",
+      "ghost blue security piano lift draft oyster baby company loan claw december",
+      "coach top bicycle fun mesh quote ozone prison print harsh atom total",
+      "razor smooth offer current smoke lawn major transfer wedding dynamic behind rally",
+      "obscure crazy mass shoot include load party ridge dwarf like history pudding",
+      "version chat shock human carbon bounce word length story half length search",
+      "resemble spider extend myself decide prison smooth oven now squirrel wisdom extend",
+      "sting nature layer dawn movie crash illness surge raven puppy exile panda",
+      "half envelope stock north occur risk cradle taste bacon anger endorse sunny",
+      "best wrist danger nasty round victory victory diamond ozone fatal unknown december",
+      "latin flock vicious toilet settle torch foster tower comfort tower prize rough",
+      "music fatal flee slender thought mention lock pizza verb gown below inner",
+      "destroy kite panel viable much attend timber gossip student topple sight bounce",
+      "manual warfare ill car welcome combine tired govern kind equal swarm rain",
+      "wash brisk behind eternal egg lemon trial public lemon when test dolphin",
+      "picnic strategy ring mercy enter fortune hard stick cruise vicious average mandate",
+      "volume abstract you addict hundred tired sword text wolf crowd begin squirrel",
+      "use garment cabbage lamp enforce blush eager verb people miss gun like",
+      "figure poverty poet object flame recipe become loan crater buddy verify say",
+      "catalog bounce toast ski awesome february popular pepper wish capital machine habit",
+      "cover system purpose beyond heart pause clay ghost all rely wire palace",
+      "sweet render easily eagle urge split depend million weapon sound bench eternal",
+      "survey upon cloth card decide mail multiply game sunset drive about dune",
+      "oblige census argue where become harbor crazy west goat okay soap panther",
+      "hockey puppy scene scissors hip secret glove oven reduce squirrel trend father",
+      "crisp again resist clock vague section permit chaos hidden song misery danger",
+      "shallow logic burst negative swift twenty lab frame collect skin dust boost",
+      "basic wide suit plunge jungle piece clock blush hire tower legal icon",
+      "palace axis letter marriage hobby decade tuition cup north nasty pitch ritual",
+      "lunar wink family crew kidney movie length math view beauty hotel depth",
+      "mammal argue dinner race into legal street exact prefer acoustic peanut base",
+      "fan bid office leaf flock bamboo table figure wise clog suggest suspect"
+    ],
+    "access": {
+      "whiteList": [
+        "127.0.0.1"
+      ]
+    }
+  },
+  "loading": {
+    "verifyOnLoading": false,
+    "loadPerIteration": 5000
+  },
+  "ssl": {
+    "enabled": false,
+    "options": {
+      "port": 443,
+      "address": "0.0.0.0",
+      "key": "./ssl/bpl.key",
+      "cert": "./ssl/bpl.crt"
+    }
+  },
+  "network": "BPL-devnet",
+  "nethash": "3640685da4447b369aa0a85958fd48ad7167661b4f3a890d7bde7a56590c1e6c"
+}

@@ -2,18 +2,21 @@
 // process.env.SILENT='true';
 // Root object
 var node = {};
-var networkName = "testnet"
+var networkName = "BPL-devnet"
 var network = require('../networks.json')[networkName];
-node.bpl = require('./bpl-js');
+node.bpl = require('bpljs');
 node.bpl.crypto.setNetworkVersion(network.pubKeyHash);
 
 // Requires
 node.bignum = require('../helpers/bignum.js');
-node.config = require('./config.json');
-node.constants = require('../helpers/constants.js');
+node.config = require('./config.devnet.json');
+node.constants = require('../constants.json');
 node.txTypes = require('../helpers/transactionTypes.js');
-node.delegates = require('./delegatesPassphrases.'+networkName+'.json');
-node.gAccount = require('./genesisPassphrase.'+networkName+'.json');
+// node.delegates = require('./delegatesPassphrases.'+networkName+'.json');
+// node.gAccount = require('./genesisPassphrase.'+networkName+'.json');
+node.delegates = require('./delegatesPassphrases.devnet.json');
+node.gAccount = require('./genesisPassphrase.devnet.json');
+
 node.gAccount.password = node.gAccount.passphrase;
 
 node._ = require('lodash');
@@ -28,7 +31,7 @@ require('colors');
 
 // Node configuration
 //node.baseUrl = 'http://' + node.config.address + ':' + node.config.port;
-node.baseUrl = 'http://localhost:' + node.config.port;
+node.baseUrl = 'http://'+ node.config.address +':' + node.config.port;
 node.api = node.supertest(node.baseUrl);
 
 node.normalizer = 100000000; // Use this to convert BPL amount to normal value
@@ -294,12 +297,10 @@ node.randomPassword = function () {
 // Abstract request
 function abstractRequest (options, done) {
 	var request = node.api[options.verb.toLowerCase()](options.path);
-
 	request.set('Accept', 'application/json');
 	request.set('version', node.version);
 	request.set('nethash', node.config.nethash);
 	request.set('port', node.config.port);
-
 	request.expect('Content-Type', /json/);
 	request.expect(200);
 

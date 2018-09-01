@@ -93,7 +93,7 @@ describe('GET /api/peers/get', function () {
 	});
 
 	it('using known ip address and port should be ok', function (done) {
-		node.get('/api/peers/get?ip=127.0.0.1&port=4000', function (err, res) {
+		node.get('/api/peers/get?ip=10.0.2.148&port=4000', function (err, res) {
 			node.expect(res.body).to.have.property('success').to.be.ok;
 			node.expect(res.body).to.have.property('peer').to.be.an('object');
 			done();

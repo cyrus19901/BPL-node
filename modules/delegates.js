@@ -6,7 +6,6 @@ var bignum = require('../helpers/bignum.js');
 var BlockReward = require('../logic/blockReward.js');
 var Script = require('../logic/script.js');
 var checkIpInList = require('../helpers/checkIpInList.js');
-var constants = require('../helpers/constants.js');
 var extend = require('extend');
 var MilestoneBlocks = require('../helpers/milestoneBlocks.js');
 var OrderBy = require('../helpers/orderBy.js');
@@ -17,6 +16,7 @@ var sql = require('../sql/delegates.js');
 var transactionTypes = require('../helpers/transactionTypes.js');
 var bigdecimal = require("bigdecimal");
 var crypto = require('crypto');
+var constants = require('../constants.json');
 var bpljs = require('bpljs');
 
 // Private fields
@@ -40,6 +40,12 @@ function Delegates (cb, scope) {
 	library = scope;
 	self = this;
 
+	bpljs = new bpljs.BplClass({
+		"delegates": constants.activeDelegates,
+		"epochTime": constants.epochTime,
+		"interval": constants.blocktime,
+		"network": scope.config.network
+	});
 
 	var Delegate = require('../logic/delegate.js');
 	__private.assetTypes[transactionTypes.DELEGATE] = library.logic.transaction.attachAssetType(
@@ -67,7 +73,8 @@ __private.attachApi = function () {
 		'get /fee': 'getFee',
 		'get /forging/getForgedByAccount': 'getForgedByAccount',
 		'put /': 'addDelegate',
- 		'get /getNextForgers': 'getNextForgers'
+ 		'get /getNextForgers': 'getNextForgers',
+ 		'get /getPublicKeys': 'getPublicKeys'
 	});
 
 	if (process.env.DEBUG) {
@@ -348,8 +355,6 @@ __private.forge = function (cb) {
 										'reward:' + temp,
 										'transactions:' + b.numberOfTransactions
 									].join(' '));
-
-									__private.script.triggerPortChangeScript(b.height);
 
 									library.bus.message('blockForged', b, cb);
 								}
@@ -1071,6 +1076,17 @@ shared.addDelegate = function (req, cb) {
 			return cb(null, {transaction: transaction[0]});
 		});
 	});
+};
+
+shared.getPublicKeys = function (req, cb) {
+	let secrets = library.config.forging.secret;
+	let publicKeys = [];
+
+	secrets.forEach((secret, index)=> {
+		publicKeys.push(bpljs.crypto.getKeys(secret).publicKey);
+	});
+
+	return cb(null, {publicKeys: publicKeys});
 };
 
 // Export

@@ -53,7 +53,7 @@ describe('GET /api/accounts/getPublicKey?address=', function () {
 	}
 
 	it('using known address should be ok', function (done) {
-		getPublicKey(node.gAccount.address, function (err, res) {
+			getPublicKey(node.gAccount.address, function (err, res) {
 			node.expect(res.body).to.have.property('success').to.be.ok;
 			node.expect(res.body).to.have.property('publicKey').to.equal(node.gAccount.publicKey);
 			done();

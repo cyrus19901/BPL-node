@@ -8,7 +8,6 @@ require('colors');
 module.exports = function (config) {
 	config = config || {};
 	var exports = {};
-
 	config.levels = config.levels || {
 		trace: 0,
 		debug: 1,
@@ -28,9 +27,7 @@ module.exports = function (config) {
 		error: 'ERR',
 		fatal: 'FTL'
 	};
-
 	config.filename = config.filename || __dirname + '/logs.log';
-
 	config.errorLevel = config.errorLevel || 'log';
 
 	var log_file = fs.createWriteStream(config.filename, {flags: 'a'});
@@ -80,7 +77,11 @@ module.exports = function (config) {
 			}
 
 			log.symbol = config.level_abbr[log.level] ? config.level_abbr[log.level] : '???';
-
+			var stats = fs.statSync(config.filename)
+			var sizeMb = stats.size/1000000.0
+			if (sizeMb > 100){
+				fs.truncate(config.filename, 0, function(){console.log('Logs rotated')})
+			}
 			if (config.levels[config.errorLevel] <= config.levels[log.level]) {
 				log.message.split("\n").forEach(function(m){
 					if (log.data) {

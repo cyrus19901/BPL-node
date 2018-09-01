@@ -211,9 +211,9 @@ describe('POST /peer/transactions', function () {
 		});
 	});
 
-	it('voting for 33 delegates at once should be ok', function (done) {
+	it('voting for 1 delegates at once should be ok', function (done) {
 		node.onNewBlock(function (err) {
-			var transaction = node.bpl.vote.createVote(account.password, delegates.slice(0, 33).map(function (delegate) {
+			var transaction = node.bpl.vote.createVote(account.password, delegates.slice(0, 1).map(function (delegate) {
 				return '+' + delegate;
 			}));
 
@@ -226,9 +226,9 @@ describe('POST /peer/transactions', function () {
 		});
 	});
 
-	it('removing votes from 33 delegates at once should be ok', function (done) {
+	it('removing votes from 1 delegates at once should be ok', function (done) {
 		node.onNewBlock(function (err) {
-			var transaction = node.bpl.vote.createVote(account.password, delegates.slice(0, 33).map(function (delegate) {
+			var transaction = node.bpl.vote.createVote(account.password, delegates.slice(0, 1).map(function (delegate) {
 				return '-' + delegate;
 			}));
 
@@ -241,15 +241,15 @@ describe('POST /peer/transactions', function () {
 		});
 	});
 
-	it('voting for 34 delegates at once should fail', function (done) {
+	it('voting for 2 delegates at once should fail', function (done) {
 		node.onNewBlock(function (err) {
-			var transaction = node.bpl.vote.createVote(account.password, delegates.slice(0, 34).map(function (delegate) {
+			var transaction = node.bpl.vote.createVote(account.password, delegates.slice(0, 2).map(function (delegate) {
 				return '+' + delegate;
 			}));
 
 			postVote(transaction, function (err, res) {
 				node.expect(res.body).to.have.property('success').to.be.not.ok;
-				node.expect(res.body).to.have.property('error').to.equal('Voting limit exceeded. Maximum is 33 votes per transaction');
+				node.expect(res.body).to.have.property('error').to.equal('Voting limit exceeded. Maximum is 1 vote per transaction');
 				done();
 			});
 		});
@@ -277,7 +277,7 @@ describe('POST /peer/transactions', function () {
 
 			postVote(transaction, function (err, res) {
 				node.expect(res.body).to.have.property('success').to.be.not.ok;
-				node.expect(res.body).to.have.property('error').to.equal('Voting limit exceeded. Maximum is 33 votes per transaction');
+				node.expect(res.body).to.have.property('error').to.equal('Voting limit exceeded. Maximum is 1 vote per transaction');
 				done();
 			});
 		});
@@ -336,8 +336,8 @@ describe('POST /peer/transactions after registering a new delegate', function ()
 	it('exceeding maximum of 1 votes within same block should fail', function (done) {
 		async.series([
 			function (seriesCb) {
-				var slicedDelegates = delegates.slice(0, 26);
-				node.expect(slicedDelegates).to.have.lengthOf(26);
+				var slicedDelegates = delegates.slice(0, 1);
+				node.expect(slicedDelegates).to.have.lengthOf(1);
 
 				postVotes({
 					delegates: slicedDelegates,
@@ -349,8 +349,8 @@ describe('POST /peer/transactions after registering a new delegate', function ()
 				}, seriesCb);
 			},
 			function (seriesCb) {
-				var slicedDelegates = delegates.slice(-25);
-				node.expect(slicedDelegates).to.have.lengthOf(25);
+				var slicedDelegates = delegates.slice(-1);
+				node.expect(slicedDelegates).to.have.lengthOf(1);
 
 				var transaction = node.bpl.vote.createVote(account.password, slicedDelegates.map(function (delegate) {
 					return '+' + delegate;
@@ -358,7 +358,7 @@ describe('POST /peer/transactions after registering a new delegate', function ()
 
 				postVote(transaction, function (err, res) {
 					node.expect(res.body).to.have.property('success').to.be.not.ok;
-					node.expect(res.body).to.have.property('error').to.equal('Maximum number of 51 votes exceeded (1 too many)');
+					node.expect(res.body).to.have.property('error').to.equal('Maximum number of 1 votes exceeded (1 too many)');
 					seriesCb();
 				});
 			}

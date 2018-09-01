@@ -90,11 +90,12 @@ describe('GET /api/blocks/getMilestone', function () {
 	});
 });
 
-describe('GET /api/blocks/getReward', function () {
+describe('GET /api/blocks/getLastReward', function () {
 
 	it('should be ok', function (done) {
-		node.get('/api/blocks/getReward', function (err, res) {
-			node.expect(res.body).to.have.property('reward').to.be.a('number');
+		node.get('/api/blocks/getLastReward', function (err, res) {
+			node.expect(res.body).to.have.property('details').to.be.a('object');
+			node.expect(res.body.details).to.have.property('reward').to.be.a('string');
 			done();
 		});
 	});
@@ -114,13 +115,14 @@ describe('GET /api/blocks/getStatus', function () {
 
 	it('should be ok', function (done) {
 		node.get('/api/blocks/getStatus', function (err, res) {
+			node.expect(res.body).to.have.property('reward').to.be.a('object');
 			node.expect(res.body).to.have.property('success').to.be.ok;
 			node.expect(res.body).to.have.property('epoch').to.be.a('string');
 			node.expect(res.body).to.have.property('height').to.be.a('number');
+			node.expect(res.body).to.have.property('id').to.be.a('number');
 			node.expect(res.body).to.have.property('fee').to.be.a('number');
 			node.expect(res.body).to.have.property('milestone').to.be.a('number');
 			node.expect(res.body).to.have.property('nethash').to.be.a('string');
-			node.expect(res.body).to.have.property('reward').to.be.a('number');
 			node.expect(res.body).to.have.property('supply').to.be.a('number');
 			done();
 		});
@@ -279,7 +281,7 @@ describe('GET /api/blocks/get?id=', function () {
 	}
 
 	it('using genesisblock id should be ok', function (done) {
-		getBlocks('17184958558311101492', function (err, res) {
+		getBlocks('5281234557367438444', function (err, res) {
 			node.expect(res.body).to.have.property('success').to.be.ok;
 			node.expect(res.body).to.have.property('block').to.be.a('object');
 			node.expect(res.body.block).to.have.property('id').to.be.a('string');
