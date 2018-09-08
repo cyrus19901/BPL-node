@@ -387,6 +387,8 @@ Transaction.prototype.process = function (trs, sender, requester, cb) {
 Transaction.prototype.verify = function (trs, sender, requester, cb) {
 	var valid = false;
 	var err = null;
+	const INT_32_MIN = -2147483648;
+ 	const INT_32_MAX = 2147483647;
 
 	if (typeof requester === 'function') {
 		cb = requester;
@@ -564,10 +566,15 @@ Transaction.prototype.verify = function (trs, sender, requester, cb) {
 		return cb(senderBalance.error);
 	}
 
+	if (trs.timestamp < INT_32_MIN || trs.timestamp > INT_32_MAX) {
+ 		return cb('Invalid transaction timestamp. Timestamp is not in the int32 range.');
+ 	}
+
 	// Check timestamp
 	if (slots.getSlotNumber(trs.timestamp) > slots.getSlotNumber()) {
-		return cb('Invalid transaction timestamp');
+		return cb('Invalid transaction timestamp. Timestamp is in the future.');
 	}
+
 
 	// Check fee
 	if(!trs.fee || trs.fee < 1) {
